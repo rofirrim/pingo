@@ -1,0 +1,9 @@
+{{range .plogs}}
+   {{template "plog.html" .}}
+{{end}}
+
+<p>
+{{range .pager}}
+{{if .Ellipsis}} ... {{else if .Current}} {{.Page}} {{else}}<a href="/menu/{{.Page}}">{{.Page}}</a>{{end}}
+{{end}}
+</p>

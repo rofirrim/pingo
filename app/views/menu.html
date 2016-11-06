@@ -1,0 +1,15 @@
+{{if not .logged}}
+
+<p>Pinchito és una recopilació de moments estel·lars (que anomenem <em>logs</em>) de la sala de tertúlia amb el mateix nom de l'<a href="http://www.irc-hispano.org/">IRC-Hispano</a>.
+</p><p>Si no teniu nom d'usuari i contrasenya podeu xafardejar igualment aquests moments, presentats aquí com delícies gastronòmiques.
+</p>
+
+
+{{template "log_list.html" .}}
+
+{{else}}
+
+{{template "vote_list.html" .}}
+
+{{end}}
+

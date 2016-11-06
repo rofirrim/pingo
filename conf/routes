@@ -4,7 +4,14 @@
 
 GET     /                                       App.Index
 GET     /menu/:page                             App.Menu
-GET     /:id                                    App.ShowLog
+GET     /especialitats                          App.Top20
+GET     /tapeta                                 App.Random
 
+GET    /public/*filepath                        Static.Serve("public")
 # Ignore favicon requests
 GET     /favicon.ico                            404
+
+GET     /users/avatar/:id                       App.Avatar
+
+# Catch all, redirects to /menu if not a valid :id
+GET     /:id                                    App.ShowLog

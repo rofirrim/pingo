@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>{{.title}}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" href="/public/img/favicon.png">
-  </head>
-  <body>
+<head>
+  <title>Pinchito</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link href="/public/css/pinchito.css" media="screen" rel="Stylesheet" type="text/css" />
+</head>
+<body>
+
+<div id="marc">
+<div id="deco_top"><div></div></div>
+<div id="pagina">
+<a href="/"><img alt="Pinchito. Logs casolans fets a foc lent" height="54" id="logo" src="/public/images/pinchito.png" width="209" /></a>
+
+{{template "top_menu.html" .}}
+{{template "side_menu.html" .}}
+
+<div id="contingut">

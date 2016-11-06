@@ -1,9 +1,20 @@
-<div style="background-color: #efe;">
-    <p>
-{{ .Protagonista.Login }} - {{ .Titol }}
-    </p>
-<pre>
-{{ .Text }}
-</pre>
+<div class="log">
+<span id="puntuacio-{{.Id}}"></span>
+<span class="titollog">
+{{if not ( eq (.Protagonista.Id) (0))}}
+<img alt="{{.Protagonista.Id}}" height="32" src="/users/avatar/{{.Protagonista.Id}}" title="{{.Protagonista.Login}}" width="32" />
+{{else}}
+<img alt="Default" height="32" src="/public/images/avatar-default.png" title="Default" width="32" />
+{{end}}
+<a href="/{{.Id}}">{{.Titol}}</a>
+</span>
+<div class="logbody">
+<p>
+{{raw .Text}}
+<p>
+</div>
+<div class="infolog">
 Log del {{.Data}} enviat per {{ .Autor.Login }}
+</div>
+<div class="logtags" id="logtags-{{.Id}}"></div>
 </div>

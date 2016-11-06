@@ -1,3 +1,5 @@
 {{template "header.html" .}}
-{{template "plog.html" .plog}}
+{{range .plogs}}
+   {{template "plog.html" .}}
+{{end}}
 {{template "footer.html" .}}

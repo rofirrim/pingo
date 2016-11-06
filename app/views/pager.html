@@ -1,0 +1,9 @@
+<div id="menu_extra">
+Més logs: <span id="paginador">
+{{if .pager.HasPrev}}<a href="/menu/{{.pager.PrevPage}}">&lt;</a> {{end}}
+{{range .pager.Items}}
+{{if .Ellipsis}} ... {{else if .IsCurrent}} {{.Page}} {{else}}<a href="/menu/{{.Page}}">{{.Page}}</a>{{end}}
+{{end}}
+{{if .pager.HasNext}} <a href="/menu/{{.pager.NextPage}}">&gt;</a>{{end}}
+</span>
+</div>

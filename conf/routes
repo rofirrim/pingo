@@ -2,18 +2,18 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                                       App.Index
-GET     /menu/:page                             App.Menu
-GET     /especialitats                          App.Top20
-GET     /tapeta                                 App.Random
-GET     /buscar                                 App.Search(1)
-GET     /buscar/:page                           App.Search
+GET     /                              App.Index
+GET     /menu/:page                    App.Menu
+GET     /especialitats                 App.Top20
+GET     /tapeta                        App.Random
+GET     /buscar                        App.Search(1)
+GET     /buscar/:page                  App.Search
 
-GET    /public/*filepath                        Static.Serve("public")
-# Ignore favicon requests
-GET     /favicon.ico                            404
+GET    /public/*filepath               Static.Serve("public")
+# Redirect favicon
+GET    /favicon.ico                    Static.Serve("public","images/favicon.ico")
 
-GET     /users/avatar/:id                       App.Avatar
+GET     /users/avatar/:id              App.Avatar
 
 # Catch all, redirects to /menu if not a valid :id
-GET     /:id                                    App.ShowLog
+GET     /:id                           App.ShowLog

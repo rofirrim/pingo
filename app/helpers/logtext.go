@@ -13,7 +13,19 @@ func gsub(text *string, pattern string, repl string) (error) {
     return nil
 }
 
-func ProcessLogText(log string) (string, error) {
+func processKeywords(text *string, keywords []string) error {
+	// Highlight keywords
+	for _, k := range keywords {
+		rex := fmt.Sprintf("(?m)(\\b)(%v)(\\b)", k)
+		err := gsub(text, rex, "$1<span class=\"highlight\">$2</span>$3")
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ProcessLogText(log string, keywords []string) (string, error) {
 
     // Linies llargues
     err := gsub(&log, "\\S{45}", "$1\n")
@@ -42,17 +54,21 @@ func ProcessLogText(log string) (string, error) {
     rex = fmt.Sprintf("(?m)%v%v *", principi, nick)
 	gsub(&log, rex, "$1<span class=\"nick_deco\">&lt;</span><span class=\"nick\">$3</span><span class=\"nick_deco\">&gt;</span> ")
 
+    err = processKeywords(&log, keywords)
+    if err != nil {
+        return "", err
+    }
+
     // NL 2 BR
     gsub(&log, "\\n", "<br>")
 
-    // TODO: Highlight
+    return log, nil
+}
 
-    // # Highlight
-    // unless paraules.nil?
-    //   for paraula in paraules
-    //     log.gsub! /([^[:alnum:]]|^)(#{paraula})([^[:alnum:]]|$)/i, "\\1<span class=\"highlight\">\\2</span>\\3"
-    //   end
-    // end
-    //
+func ProcessLogTitle(log string, keywords []string) (string, error) {
+    err := processKeywords(&log, keywords)
+    if err != nil {
+        return "", err
+    }
     return log, nil
 }

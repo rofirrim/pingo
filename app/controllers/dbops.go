@@ -2,10 +2,11 @@ package controllers
 
 import "pinchito/app"
 import "pinchito/app/models"
-import "pinchito/app/helpers"
 import "database/sql"
 import "github.com/revel/revel"
 import "github.com/go-sql-driver/mysql"
+import "fmt"
+import "strings"
 import "errors"
 
 func GetUser(id int) (models.User, error) {
@@ -55,10 +56,6 @@ func makePlog(err error, plog models.Plog, autor int, protagonista int, nt mysql
         return models.Plog{}, err
     }
 
-    plog.Text, err = helpers.ProcessLogText(plog.Text)
-    if err != nil {
-        return models.Plog{}, err
-    }
     return plog, nil
 }
 
@@ -102,7 +99,7 @@ func GetPlogBunch(page int, numplogs *int) ([]models.Plog, error) {
         return []models.Plog{}, err
     }
 
-    rows, err := app.DB.Query("SELECT p.id, p.text, p.autor, p.protagonista, p.titol, p.data, 0.0 as nota FROM plogs p ORDER BY data DESC LIMIT ? OFFSET ?", app.LogsPerPage, offset);
+    rows, err := app.DB.Query("SELECT p.id, p.text, p.autor, p.protagonista, p.titol, p.data, 0.0 as nota FROM plogs p ORDER BY p.data DESC LIMIT ? OFFSET ?", app.LogsPerPage, offset);
     if err != nil {
 		revel.ERROR.Println("Error retrieving rows of plogs", err)
         return []models.Plog{}, err
@@ -142,4 +139,48 @@ func GetRandomCookie() (models.Cookie, error) {
     var err error
     err = row.Scan(&result.Text, &result.Autor)
     return result, err
+}
+
+func SearchPlogs(keywords []string, page int, numplogs *int) ([]models.Plog, error) {
+
+    var condText []string = make([]string, len(keywords))
+    var condTitol []string = make([]string, len(keywords))
+    for i := range(keywords) {
+        condText[i] = "p.text REGEXP ?"
+        condTitol[i] = "p.titol REGEXP ?"
+    }
+
+    // Sometimes go is weird
+    concatRange := append(keywords, keywords...)
+    ifaceArray := make([]interface{}, len(concatRange))
+    for i, v := range(concatRange) {
+        ifaceArray[i] = fmt.Sprintf("[[:<:]]%v[[:>:]]", v)
+    }
+    offset := (page - 1) * app.LogsPerPage
+
+	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM plogs p WHERE ( %v ) OR ( %v )",
+            strings.Join(condText, " AND "),
+            strings.Join(condTitol, " AND "))
+    countRow := app.DB.QueryRow(countQuery, ifaceArray...);
+    err := countRow.Scan(numplogs)
+    if err != nil {
+		revel.ERROR.Println("Error retrieving rows of plogs after search count", err)
+        return []models.Plog{}, err
+    }
+
+    ifaceArray = append(ifaceArray, app.LogsPerPage)
+    ifaceArray = append(ifaceArray, offset)
+
+	query := fmt.Sprintf("SELECT p.id, p.text, p.autor, p.protagonista, p.titol, p.data, 0.0 AS rank FROM plogs p WHERE ( %v ) OR ( %v ) ORDER BY p.data DESC LIMIT ? OFFSET ?",
+            strings.Join(condText, " AND "),
+            strings.Join(condTitol, " AND "))
+
+    revel.INFO.Println("Error retrieving rows of plogs after search", query)
+    rows, err := app.DB.Query(query, ifaceArray...);
+    if err != nil {
+		revel.ERROR.Println("Error retrieving rows of plogs after search", err)
+        return []models.Plog{}, err
+    }
+
+    return retrievePlogs(rows)
 }

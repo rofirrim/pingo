@@ -1,4 +1,5 @@
 <div id="menu_extra">
+{{if gt (len .pager.Items) 0}}
 Més logs: <span id="paginador">
 {{if .pager.HasPrev}}<a href="/menu/{{.pager.PrevPage}}">&lt;</a> {{end}}
 {{range .pager.Items}}
@@ -6,4 +7,5 @@ Més logs: <span id="paginador">
 {{end}}
 {{if .pager.HasNext}} <a href="/menu/{{.pager.NextPage}}">&gt;</a>{{end}}
 </span>
+{{end}}
 </div>

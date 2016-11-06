@@ -1,8 +1,11 @@
 package controllers
 
 import "pinchito/app"
+import "pinchito/app/helpers"
+import "pinchito/app/models"
 import "github.com/revel/revel"
 import "net/http"
+import "strings"
 
 type App struct {
 	*revel.Controller
@@ -31,6 +34,35 @@ func computeCookie(renderMap *map[string]interface{}) {
     (*renderMap)["cookie"] = cookie
 }
 
+func processLogHighlights(plog *models.Plog, keywords []string) {
+    t, err := helpers.ProcessLogText(plog.Text, keywords)
+    if err != nil {
+        revel.ERROR.Println("Error when processing text of log", err)
+    } else {
+        plog.Text = t
+    }
+    t, err = helpers.ProcessLogTitle(plog.Titol, keywords)
+    if err != nil {
+        revel.ERROR.Println("Error when processing title of log", err)
+    } else {
+        plog.Titol = t
+    }
+}
+
+func processLog(plog *models.Plog) {
+    processLogHighlights(plog, []string{})
+}
+
+func processLogsHighlights(plogs *[]models.Plog, keywords []string) {
+    for i := range(*plogs) {
+        processLogHighlights(&((*plogs)[i]), keywords)
+    }
+}
+
+func processLogs(plogs *[]models.Plog) {
+    processLogsHighlights(plogs, []string{})
+}
+
 func (c App) FinishAndRender(template string) revel.Result {
 
     computeCookie(&c.RenderArgs)
@@ -43,6 +75,11 @@ func buildPager(page int, numplogs int) Pager {
 	if numplogs%app.LogsPerPage != 0 {
 		numpages += 1
 	}
+
+    // Degenerated case
+    if numpages == 0 {
+        return Pager{}
+    }
 
 	links := make([]bool, numpages)
 	links[0] = true
@@ -96,8 +133,11 @@ func (c App) Menu(page int) revel.Result {
 
     pager := buildPager(page, numplogs)
 
+    processLogs(&plogs)
     c.RenderArgs["plogs"] = plogs
+
     c.RenderArgs["pager"] = pager
+
 	return c.FinishAndRender("menu.html")
 }
 
@@ -107,6 +147,7 @@ func (c App) ShowLog(id int) revel.Result {
 		revel.INFO.Println("Plog not found. Redirecting to menu", err)
 		return c.Menu(1)
 	} else {
+        processLog(&plog)
         c.RenderArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}
@@ -119,7 +160,10 @@ func (c App) Top20() revel.Result {
 		revel.ERROR.Println("Error when showing page", err)
         return c.RenderError(err)
     }
+
+    processLogs(&plogs)
     c.RenderArgs["plogs"] = plogs
+
     return c.FinishAndRender("top20.html")
 }
 
@@ -130,7 +174,10 @@ func (c App) Random() revel.Result {
 		revel.ERROR.Println("Error when showing page", err)
         return c.RenderError(err)
     }
+
+    processLogs(&plogs)
     c.RenderArgs["plogs"] = plogs
+
     return c.FinishAndRender("random.html")
 }
 
@@ -152,3 +199,33 @@ func (c App) Avatar(id int) revel.Result {
 
     return BlobBytes(blob)
 }
+
+func (c App) Search(page int) revel.Result {
+    if page <= 0 {
+        page = 1
+    }
+    keywords := strings.Split(c.Params.Get("s"), " ");
+    if len(keywords) == 0 {
+        return c.Index()
+    }
+
+    var numplogs int
+    plogs, err := SearchPlogs(keywords, page, &numplogs)
+    if err != nil {
+        // Abandon all hope here
+		revel.ERROR.Println("Error when showing page", err)
+        return c.RenderError(err)
+    }
+
+    pager := buildPager(page, numplogs)
+
+    processLogsHighlights(&plogs, keywords)
+    c.RenderArgs["plogs"] = plogs
+
+    c.RenderArgs["pager"] = pager
+
+    c.RenderArgs["query"] = c.Params.Get("s")
+
+    return c.FinishAndRender("search.html")
+}
+

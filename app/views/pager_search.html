@@ -1,0 +1,12 @@
+<div id="menu_extra">
+{{if gt (len .pager.Items) 0}}
+{{$q:=.query}}
+Més logs: <span id="paginador">
+{{if .pager.HasPrev}}<a href="/buscar/{{.pager.PrevPage}}/?s={{$q}}">&lt;</a> {{end}}
+{{range .pager.Items}}
+{{if .Ellipsis}} ... {{else if .IsCurrent}} {{.Page}} {{else}}<a href="/buscar/{{.Page}}/?s={{$q}}">{{.Page}}</a>{{end}}
+{{end}}
+{{if .pager.HasNext}} <a href="/buscar/{{.pager.NextPage}}/?s={{$q}}">&gt;</a>{{end}}
+</span>
+{{end}}
+</div>

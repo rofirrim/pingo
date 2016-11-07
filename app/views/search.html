@@ -1,5 +1,10 @@
 {{template "header.html" .}}
+{{if eq (len .plogs) 0}}
+<h1>No s'han trobat resultats per "{{.query}}"</h1>
+{{else}}
+<h1>Resultats per "{{.query}}"</h1>
 {{template "log_list.html" .}}
 {{template "pager_search.html" .}}
+{{end}}
 {{template "footer.html" .}}
 

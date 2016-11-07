@@ -28,7 +28,7 @@ func processKeywords(text *string, keywords []string) error {
 func ProcessLogText(log string, keywords []string) (string, error) {
 
     // Linies llargues
-    err := gsub(&log, "\\S{45}", "$1\n")
+    err := gsub(&log, "(\\S{45})", "$1\n")
     if err != nil {
         return "", err
     }

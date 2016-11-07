@@ -1,10 +1,9 @@
 <div id="menu_lateral">
 
 <div class="menu_group">La nostra carta</div>
-<a class="actual" href="/menu">Menú</a>
-<a class="no_actual" href="/especialitats">Especialitats</a>
-
-<a class="no_actual" href="/tapeta">Una tapeta</a>
+<a class="{{if eq .menuitem "menu"}}actual{{else}}no_actual{{end}}" href="/menu">Menú</a>
+<a class="{{if eq .menuitem "especialitats"}}actual{{else}}no_actual{{end}}" href="/especialitats">Especialitats</a>
+<a class="{{if eq .menuitem "tapeta"}}actual{{else}}no_actual{{end}}" href="/tapeta">Una tapeta</a>
 
 </div>
 

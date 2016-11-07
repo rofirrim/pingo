@@ -65,6 +65,11 @@ func processLogs(plogs *[]models.Plog) {
 
 func (c App) FinishAndRender(template string) revel.Result {
 
+    // Make sure "menuitem" is defined
+    _, menuitem := c.RenderArgs["menuitem"]
+    if !menuitem {
+        c.RenderArgs["menuitem"] = ""
+    }
     computeCookie(&c.RenderArgs)
     return c.RenderTemplate(template)
 }
@@ -137,6 +142,7 @@ func (c App) Menu(page int) revel.Result {
     c.RenderArgs["plogs"] = plogs
 
     c.RenderArgs["pager"] = pager
+    c.RenderArgs["menuitem"] = "menu"
 
 	return c.FinishAndRender("menu.html")
 }
@@ -163,6 +169,7 @@ func (c App) Top20() revel.Result {
 
     processLogs(&plogs)
     c.RenderArgs["plogs"] = plogs
+    c.RenderArgs["menuitem"] = "especialitats"
 
     return c.FinishAndRender("top20.html")
 }
@@ -177,6 +184,7 @@ func (c App) Random() revel.Result {
 
     processLogs(&plogs)
     c.RenderArgs["plogs"] = plogs
+    c.RenderArgs["menuitem"] = "tapeta"
 
     return c.FinishAndRender("random.html")
 }

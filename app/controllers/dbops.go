@@ -40,9 +40,20 @@ func makePlog(err error, plog models.Plog, autor int, protagonista int, nt mysql
 		revel.ERROR.Println("Error while scanning row to make plog", err)
         return models.Plog{}, err
     }
+
     if nt.Valid {
-        plog.Data = nt.Time
+        plog.Dia = nt.Time.Format("02/01/2006")
+        plog.Hora = nt.Time.Format("15:04")
+    } else {
+        plog.Dia = "dia desconegut"
+        plog.Hora = "tantes"
     }
+
+    // Normalise log title if it does not have any
+    if strings.TrimSpace(plog.Titol) == "" {
+        plog.Titol = fmt.Sprintf("Log %d", plog.Id)
+    }
+
 	if protagonista != 0 {
 		plog.Protagonista, err = GetUser(protagonista)
 		if err != nil {
@@ -50,6 +61,7 @@ func makePlog(err error, plog models.Plog, autor int, protagonista int, nt mysql
 			return models.Plog{}, err
 		}
 	}
+
     plog.Autor, err = GetUser(autor)
     if err != nil {
 		revel.ERROR.Println("Error getting user", err)

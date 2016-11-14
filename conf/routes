@@ -15,6 +15,9 @@ GET    /favicon.ico                    Static.Serve("public","images/favicon.ico
 
 GET     /users/avatar/:id              App.Avatar
 
+# Telegram bot
+POST    /telegrambot                   TelegramBot.Entry
+
 # Certbot webroot support
 GET     /.well-known/acme-challenge/*filepath    Static.Serve("certbot/.well-known/acme-challenge")
 

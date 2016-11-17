@@ -2,6 +2,10 @@ package app
 
 import "github.com/revel/revel"
 import "database/sql"
+import "fmt"
+import "path/filepath"
+import "encoding/json"
+import "io/ioutil"
 import _ "github.com/go-sql-driver/mysql"
 
 func init() {
@@ -29,12 +33,50 @@ func init() {
 var DB *sql.DB
 const LogsPerPage = 10
 
+type dbConnectionInfo struct {
+        Name string
+        User string
+        Pass string
+}
+
+type Settings struct {
+    DB dbConnectionInfo
+}
+
+// revel uses a ConfPaths variable that includes both revel and app confs
+var AppConfPath string
+
+func loadSettings() (Settings, error) {
+    var settings Settings
+    data, err := ioutil.ReadFile(filepath.Join(AppConfPath, "settings.json"))
+    if err != nil {
+        return settings, err
+    }
+    err = json.Unmarshal(data, &settings)
+    if err != nil {
+        return settings, err
+    }
+    return settings, nil
+}
+
+func loadDB(DB dbConnectionInfo) (*sql.DB, error) {
+    connection := fmt.Sprintf("%s:%s@/%s?charset=latin1", DB.User, DB.Pass, DB.Name)
+	return sql.Open("mysql", connection)
+}
+
 func InitDB() {
+    AppConfPath = filepath.Join(revel.BasePath, "conf")
 	var err error
-	DB, err = sql.Open("mysql", "pinchito:j0hnsh4ft@/pinchito?charset=latin1")
+    var settings Settings
+    settings, err = loadSettings()
+	if err != nil {
+		revel.ERROR.Println("Load settings", err)
+	}
+
+    DB, err = loadDB(settings.DB)
 
 	if err != nil {
-		revel.INFO.Println("DB Error", err)
+		revel.ERROR.Println("DB Error", err)
 	}
 	revel.INFO.Println("DB Connected")
 }

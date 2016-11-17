@@ -14,66 +14,65 @@ type App struct {
 }
 
 type PagerItem struct {
-    Ellipsis bool;
-    IsCurrent bool;
-    Page int;
+	Ellipsis  bool
+	IsCurrent bool
+	Page      int
 }
 
-type Pager struct
-{
-    HasPrev bool;
-    PrevPage int;
-    HasNext bool;
-    NextPage int;
-    Items []PagerItem;
+type Pager struct {
+	HasPrev  bool
+	PrevPage int
+	HasNext  bool
+	NextPage int
+	Items    []PagerItem
 }
 
 func computeCookie(renderMap *map[string]interface{}) {
-    cookie, err := GetRandomCookie()
-    if err != nil {
-        return
-    }
-    (*renderMap)["cookie"] = cookie
+	cookie, err := GetRandomCookie()
+	if err != nil {
+		return
+	}
+	(*renderMap)["cookie"] = cookie
 }
 
 func processLogHighlights(plog *models.Plog, keywords []string) {
-    t, err := helpers.ProcessLogText(plog.Text, keywords)
-    if err != nil {
-        revel.ERROR.Println("Error when processing text of log", err)
-    } else {
-        plog.Text = t
-    }
-    t, err = helpers.ProcessLogTitle(plog.Titol, keywords)
-    if err != nil {
-        revel.ERROR.Println("Error when processing title of log", err)
-    } else {
-        plog.Titol = t
-    }
+	t, err := helpers.ProcessLogText(plog.Text, keywords)
+	if err != nil {
+		revel.ERROR.Println("Error when processing text of log", err)
+	} else {
+		plog.Text = t
+	}
+	t, err = helpers.ProcessLogTitle(plog.Titol, keywords)
+	if err != nil {
+		revel.ERROR.Println("Error when processing title of log", err)
+	} else {
+		plog.Titol = t
+	}
 }
 
 func processLog(plog *models.Plog) {
-    processLogHighlights(plog, []string{})
+	processLogHighlights(plog, []string{})
 }
 
 func processLogsHighlights(plogs *[]models.Plog, keywords []string) {
-    for i := range(*plogs) {
-        processLogHighlights(&((*plogs)[i]), keywords)
-    }
+	for i := range *plogs {
+		processLogHighlights(&((*plogs)[i]), keywords)
+	}
 }
 
 func processLogs(plogs *[]models.Plog) {
-    processLogsHighlights(plogs, []string{})
+	processLogsHighlights(plogs, []string{})
 }
 
 func (c App) FinishAndRender(template string) revel.Result {
 
-    // Make sure "menuitem" is defined
-    _, menuitem := c.RenderArgs["menuitem"]
-    if !menuitem {
-        c.RenderArgs["menuitem"] = ""
-    }
-    computeCookie(&c.RenderArgs)
-    return c.RenderTemplate(template)
+	// Make sure "menuitem" is defined
+	_, menuitem := c.RenderArgs["menuitem"]
+	if !menuitem {
+		c.RenderArgs["menuitem"] = ""
+	}
+	computeCookie(&c.RenderArgs)
+	return c.RenderTemplate(template)
 }
 
 func buildPager(page int, numplogs int) Pager {
@@ -83,10 +82,10 @@ func buildPager(page int, numplogs int) Pager {
 		numpages += 1
 	}
 
-    // Degenerated case
-    if numpages == 0 {
-        return Pager{}
-    }
+	// Degenerated case
+	if numpages == 0 {
+		return Pager{}
+	}
 
 	links := make([]bool, numpages)
 	links[0] = true
@@ -121,30 +120,30 @@ func buildPager(page int, numplogs int) Pager {
 }
 
 func (c App) Index() revel.Result {
-    return c.Menu(1)
+	return c.Menu(1)
 }
 
 func (c App) Menu(page int) revel.Result {
-    if page <= 0 {
-        page = 1
-    }
-    revel.INFO.Println("Requesting page", page)
+	if page <= 0 {
+		page = 1
+	}
+	revel.INFO.Println("Requesting page", page)
 
-    var numplogs int
-    plogs, err := GetPlogBunch(page, &numplogs)
-    if err != nil {
-        // Abandon all hope here
+	var numplogs int
+	plogs, err := GetPlogBunch(page, &numplogs)
+	if err != nil {
+		// Abandon all hope here
 		revel.ERROR.Println("Error when showing page", err)
-        return c.RenderError(err)
-    }
+		return c.RenderError(err)
+	}
 
-    pager := buildPager(page, numplogs)
+	pager := buildPager(page, numplogs)
 
-    processLogs(&plogs)
-    c.RenderArgs["plogs"] = plogs
+	processLogs(&plogs)
+	c.RenderArgs["plogs"] = plogs
 
-    c.RenderArgs["pager"] = pager
-    c.RenderArgs["menuitem"] = "menu"
+	c.RenderArgs["pager"] = pager
+	c.RenderArgs["menuitem"] = "menu"
 
 	return c.FinishAndRender("menu.html")
 }
@@ -155,42 +154,41 @@ func (c App) ShowLog(id int) revel.Result {
 		revel.INFO.Println("Plog not found. Redirecting to menu", err)
 		return c.Menu(1)
 	} else {
-        processLog(&plog)
-        c.RenderArgs["plog"] = plog
+		processLog(&plog)
+		c.RenderArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}
 }
 
 func (c App) Top20() revel.Result {
-    plogs, err := GetTop20Plogs()
-    if err != nil {
-        // Abandon all hope here
+	plogs, err := GetTop20Plogs()
+	if err != nil {
+		// Abandon all hope here
 		revel.ERROR.Println("Error when showing page", err)
-        return c.RenderError(err)
-    }
+		return c.RenderError(err)
+	}
 
-    processLogs(&plogs)
-    c.RenderArgs["plogs"] = plogs
-    c.RenderArgs["menuitem"] = "especialitats"
+	processLogs(&plogs)
+	c.RenderArgs["plogs"] = plogs
+	c.RenderArgs["menuitem"] = "especialitats"
 
-    return c.FinishAndRender("top20.html")
+	return c.FinishAndRender("top20.html")
 }
 
 func (c App) Random() revel.Result {
-    plogs, err := GetRandomPlogs()
-    if err != nil {
-        // Abandon all hope here
+	plogs, err := GetRandomPlogs()
+	if err != nil {
+		// Abandon all hope here
 		revel.ERROR.Println("Error when showing page", err)
-        return c.RenderError(err)
-    }
+		return c.RenderError(err)
+	}
 
-    processLogs(&plogs)
-    c.RenderArgs["plogs"] = plogs
-    c.RenderArgs["menuitem"] = "tapeta"
+	processLogs(&plogs)
+	c.RenderArgs["plogs"] = plogs
+	c.RenderArgs["menuitem"] = "tapeta"
 
-    return c.FinishAndRender("random.html")
+	return c.FinishAndRender("random.html")
 }
-
 
 type BlobBytes []byte
 
@@ -200,42 +198,41 @@ func (b BlobBytes) Apply(req *revel.Request, resp *revel.Response) {
 }
 
 func (c App) Avatar(id int) revel.Result {
-    blob, err := GetBlobAvatar(id)
-    if err != nil {
-        // Abandon all hope here
+	blob, err := GetBlobAvatar(id)
+	if err != nil {
+		// Abandon all hope here
 		revel.ERROR.Println("Error when showing page", err)
-        return c.RenderError(err)
-    }
+		return c.RenderError(err)
+	}
 
-    return BlobBytes(blob)
+	return BlobBytes(blob)
 }
 
 func (c App) Search(page int) revel.Result {
-    if page <= 0 {
-        page = 1
-    }
-    keywords := strings.Split(c.Params.Get("s"), " ");
-    if len(keywords) == 0 {
-        return c.Index()
-    }
+	if page <= 0 {
+		page = 1
+	}
+	keywords := strings.Split(c.Params.Get("s"), " ")
+	if len(keywords) == 0 {
+		return c.Index()
+	}
 
-    var numplogs int
-    plogs, err := SearchPlogs(keywords, page, &numplogs)
-    if err != nil {
-        // Abandon all hope here
+	var numplogs int
+	plogs, err := SearchPlogs(keywords, page, &numplogs)
+	if err != nil {
+		// Abandon all hope here
 		revel.ERROR.Println("Error when showing page", err)
-        return c.RenderError(err)
-    }
+		return c.RenderError(err)
+	}
 
-    pager := buildPager(page, numplogs)
+	pager := buildPager(page, numplogs)
 
-    processLogsHighlights(&plogs, keywords)
-    c.RenderArgs["plogs"] = plogs
+	processLogsHighlights(&plogs, keywords)
+	c.RenderArgs["plogs"] = plogs
 
-    c.RenderArgs["pager"] = pager
+	c.RenderArgs["pager"] = pager
 
-    c.RenderArgs["query"] = c.Params.Get("s")
+	c.RenderArgs["query"] = c.Params.Get("s")
 
-    return c.FinishAndRender("search.html")
+	return c.FinishAndRender("search.html")
 }
-

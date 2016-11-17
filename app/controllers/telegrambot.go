@@ -8,5 +8,5 @@ type TelegramBot struct {
 }
 
 func (c TelegramBot) Entry() revel.Result {
-        return c.RenderError(errors.New("Not implemented yet"))
+	return c.RenderError(errors.New("Not implemented yet"))
 }

@@ -65,13 +65,13 @@ func (c TelegramBot) Entry() revel.Result {
 	}
 
 	if update.Message == nil {
-		revel.ERROR.Println("Missing message")
-		return c.RenderError(errors.New("Missing message"))
+		revel.INFO.Println("Missing message")
+		return c.RenderText("")
 	}
 
 	if update.Message.Text == nil {
-		revel.ERROR.Println("Missing text")
-		return c.RenderError(errors.New("Missing text"))
+		revel.INFO.Println("Missing text")
+		return c.RenderText("")
 	}
 
 	// Dispatcher

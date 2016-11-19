@@ -10,3 +10,9 @@ type Plog struct {
 	Hora         string
 	Nota         float32
 }
+
+func (plog Plog) Description() string {
+
+	return plog.Text
+
+}

@@ -4,9 +4,9 @@
   <span id="puntuacio-{{.Id}}"></span>
 <span class="titollog">
 {{if not ( eq (.Protagonista.Id) (0))}}
-<img alt="{{.Protagonista.Id}}" height="32" src="/users/avatar/{{.Protagonista.Id}}" title="{{.Protagonista.Login}}" width="32" />
+<amp-img alt="{{.Protagonista.Id}}" height="32" src="/users/avatar/{{.Protagonista.Id}}" title="{{.Protagonista.Login}}" width="32"></amp-img>
 {{else}}
-<img alt="Default" height="32" src="/public/images/avatar-default.png" title="Default" width="32" />
+<amp-img alt="Default" height="32" src="/public/images/avatar-default.png" title="Default" width="32"></amp-img>
 {{end}}
 <a href="/{{.Id}}">{{raw .Titol}}</a>
 </span>

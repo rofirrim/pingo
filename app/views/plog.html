@@ -1,6 +1,6 @@
 <div class="log">
   <meta property="og:title" content="{{raw .Titol}}" >
-  <meta property="og:description" content="{{raw .Description}}" >
+  <meta property="og:description" content="{{nl2br .Description}}" >
   <span id="puntuacio-{{.Id}}"></span>
 <span class="titollog">
 {{if not ( eq (.Protagonista.Id) (0))}}

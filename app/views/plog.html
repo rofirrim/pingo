@@ -1,5 +1,7 @@
 <div class="log">
-<span id="puntuacio-{{.Id}}"></span>
+  <meta property="og:title" content="{{raw .Titol}}" >
+  <meta property="og:description" content="{{raw .Description}}" >
+  <span id="puntuacio-{{.Id}}"></span>
 <span class="titollog">
 {{if not ( eq (.Protagonista.Id) (0))}}
 <img alt="{{.Protagonista.Id}}" height="32" src="/users/avatar/{{.Protagonista.Id}}" title="{{.Protagonista.Login}}" width="32" />

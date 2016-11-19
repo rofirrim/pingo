@@ -27,6 +27,7 @@ func processKeywords(text *string, keywords []string) error {
 
 func ProcessLogText(log string, keywords []string) (string, error) {
 
+
 	// Linies llargues
 	err := gsub(&log, "(\\S{45})", "$1\n")
 	if err != nil {
@@ -41,7 +42,7 @@ func ProcessLogText(log string, keywords []string) (string, error) {
 	// Hora + nick
 	var rex string
 	rex = fmt.Sprintf("(?m)%v%v *%v *", principi, hora, nick)
-	err = gsub(&log, rex, "$1<span class=\"hora\">[$2]</span> <span class=\"nick_deco\">&lt;</span><span class=\"nick\">$4</span><span class=\"nick_deco\">&gt;</span> ")
+	err = gsub(&log, rex, "$1<span class=\"hora\">[$2]</span> <span class=\"nick_deco\">≺</span><span class=\"nick\">$4</span><span class=\"nick_deco\">≻</span> ")
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +53,7 @@ func ProcessLogText(log string, keywords []string) (string, error) {
 
 	// Nick sol
 	rex = fmt.Sprintf("(?m)%v%v *", principi, nick)
-	gsub(&log, rex, "$1<span class=\"nick_deco\">&lt;</span><span class=\"nick\">$3</span><span class=\"nick_deco\">&gt;</span> ")
+	gsub(&log, rex, "$1<span class=\"nick_deco\">≺</span><span class=\"nick\">$3</span><span class=\"nick_deco\">≻</span> ")
 
 	err = processKeywords(&log, keywords)
 	if err != nil {

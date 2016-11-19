@@ -18,15 +18,15 @@ func doTest(c *TelegramBot, update messages.Update) revel.Result {
 	inputMessage := update.Message
 	from := inputMessage.From
 
-    if from.LastName == nil {
-        var noLastName string = "<sense cognom>"
-        from.LastName = &noLastName
-    }
+	if from.LastName == nil {
+		var noLastName string = "<sense cognom>"
+		from.LastName = &noLastName
+	}
 
-    if from.Username == nil {
-        var noUserName string = "<sense username>"
-        from.LastName = &noUserName
-    }
+	if from.Username == nil {
+		var noUserName string = "<sense username>"
+		from.LastName = &noUserName
+	}
 
 	var sendMessage commands.SendMessage
 	sendMessage.ChatId = fmt.Sprintf("%d", inputMessage.Chat.Id)
@@ -50,17 +50,17 @@ var commandList CommandList = []CommandPair{
 
 // Generic entry
 func (c TelegramBot) Entry() revel.Result {
-    jsonData, err := ioutil.ReadAll(c.Request.Body)
-    defer c.Request.Body.Close()
+	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	defer c.Request.Body.Close()
 	if err != nil {
-        revel.ERROR.Println("Error reading data:", err)
+		revel.ERROR.Println("Error reading data:", err)
 		return c.RenderError(err)
-    }
+	}
 
 	var update messages.Update
 	err = json.Unmarshal(jsonData, &update)
 	if err != nil {
-        revel.ERROR.Println("Could not decode input JSON", err)
+		revel.ERROR.Println("Could not decode input JSON", err)
 		return c.RenderError(err)
 	}
 
@@ -81,6 +81,6 @@ func (c TelegramBot) Entry() revel.Result {
 		}
 	}
 
-    revel.ERROR.Println("Uknown command")
-    return c.RenderError(errors.New("Unknown command"))
+	revel.ERROR.Println("Uknown command")
+	return c.RenderError(errors.New("Unknown command"))
 }

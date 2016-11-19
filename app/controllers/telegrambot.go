@@ -28,7 +28,7 @@ func doTest(c *TelegramBot, update messages.Update) revel.Result {
 		from.LastName = &noUserName
 	}
 
-	var sendMessage commands.SendMessage
+	var sendMessage commands.SendMessage = commands.NewSendMessage()
 	sendMessage.ChatId = fmt.Sprintf("%d", inputMessage.Chat.Id)
 	sendMessage.Text = fmt.Sprintf("Ordre de prova. Enviada per \"%s %s\" (conegut com \"%s\")",
 		from.FirstName, *from.LastName, *from.Username)

@@ -12,7 +12,5 @@ type Plog struct {
 }
 
 func (plog Plog) Description() string {
-
 	return plog.Text
-
 }

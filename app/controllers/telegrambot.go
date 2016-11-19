@@ -81,6 +81,6 @@ func (c TelegramBot) Entry() revel.Result {
 		}
 	}
 
-	revel.ERROR.Println("Uknown command")
+	revel.ERROR.Println("Unkown command")
 	return c.RenderError(errors.New("Unknown command"))
 }

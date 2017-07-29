@@ -67,11 +67,11 @@ func processLogs(plogs *[]models.Plog) {
 func (c App) FinishAndRender(template string) revel.Result {
 
 	// Make sure "menuitem" is defined
-	_, menuitem := c.RenderArgs["menuitem"]
+	_, menuitem := c.ViewArgs["menuitem"]
 	if !menuitem {
-		c.RenderArgs["menuitem"] = ""
+		c.ViewArgs["menuitem"] = ""
 	}
-	computeCookie(&c.RenderArgs)
+	computeCookie(&c.ViewArgs)
 	return c.RenderTemplate(template)
 }
 
@@ -140,10 +140,10 @@ func (c App) Menu(page int) revel.Result {
 	pager := buildPager(page, numplogs)
 
 	processLogs(&plogs)
-	c.RenderArgs["plogs"] = plogs
+	c.ViewArgs["plogs"] = plogs
 
-	c.RenderArgs["pager"] = pager
-	c.RenderArgs["menuitem"] = "menu"
+	c.ViewArgs["pager"] = pager
+	c.ViewArgs["menuitem"] = "menu"
 
 	return c.FinishAndRender("menu.html")
 }
@@ -154,8 +154,11 @@ func (c App) ShowLog(id int) revel.Result {
 		revel.INFO.Println("Plog not found. Redirecting to menu", err)
 		return c.Menu(1)
 	} else {
-		processLog(&plog)
-		c.RenderArgs["plog"] = plog
+		if c.Request.ContentType == "application/json" {
+			c.Response.ContentType = "application/json"
+			return c.RenderJSON(plog)
+		}
+		c.ViewArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}
 }
@@ -169,8 +172,8 @@ func (c App) Top20() revel.Result {
 	}
 
 	processLogs(&plogs)
-	c.RenderArgs["plogs"] = plogs
-	c.RenderArgs["menuitem"] = "especialitats"
+	c.ViewArgs["plogs"] = plogs
+	c.ViewArgs["menuitem"] = "especialitats"
 
 	return c.FinishAndRender("top20.html")
 }
@@ -183,9 +186,16 @@ func (c App) Random() revel.Result {
 		return c.RenderError(err)
 	}
 
+	if c.Request.ContentType == "application/json" {
+		c.Response.ContentType = "application/json"
+		if len(plogs) == 0 {
+			return c.NotFound("Log not found", nil)
+		}
+		return c.RenderJSON(plogs[0])
+	}
 	processLogs(&plogs)
-	c.RenderArgs["plogs"] = plogs
-	c.RenderArgs["menuitem"] = "tapeta"
+	c.ViewArgs["plogs"] = plogs
+	c.ViewArgs["menuitem"] = "tapeta"
 
 	return c.FinishAndRender("random.html")
 }
@@ -209,6 +219,9 @@ func (c App) Avatar(id int) revel.Result {
 }
 
 func (c App) Search(page int) revel.Result {
+	if c.Request.ContentType == "application/json" {
+		return c.searchJSON(c.Params)
+	}
 	if page <= 0 {
 		page = 1
 	}
@@ -228,11 +241,28 @@ func (c App) Search(page int) revel.Result {
 	pager := buildPager(page, numplogs)
 
 	processLogsHighlights(&plogs, keywords)
-	c.RenderArgs["plogs"] = plogs
+	c.ViewArgs["plogs"] = plogs
 
-	c.RenderArgs["pager"] = pager
+	c.ViewArgs["pager"] = pager
 
-	c.RenderArgs["query"] = c.Params.Get("s")
+	c.ViewArgs["query"] = c.Params.Get("s")
 
 	return c.FinishAndRender("search.html")
+}
+
+func (c App) searchJSON(params *revel.Params) revel.Result {
+	c.Response.ContentType = "application/json"
+	keywords := strings.Split(params.Get("s"), " ")
+	if len(keywords) == 0 {
+		return c.NotFound("Log not found", nil)
+	}
+	var numplogs = 1
+	plogs, err := SearchPlogs(keywords, 1, &numplogs)
+	if err != nil {
+		c.RenderError(err)
+	}
+	if len(plogs) == 0 {
+		return c.NotFound("Log not found", nil)
+	}
+	return c.RenderJSON(plogs[0])
 }

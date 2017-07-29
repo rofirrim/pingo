@@ -154,14 +154,11 @@ func (c App) ShowLog(id int) revel.Result {
 		revel.INFO.Println("Plog not found. Redirecting to menu", err)
 		return c.Menu(1)
 	} else {
-		if c.Request.ContentType == "application/json" {
-			c.Response.ContentType = "application/json"
-			return c.RenderJSON(plog)
-		}
 		c.ViewArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}
 }
+
 
 func (c App) Top20() revel.Result {
 	plogs, err := GetTop20Plogs()
@@ -186,13 +183,6 @@ func (c App) Random() revel.Result {
 		return c.RenderError(err)
 	}
 
-	if c.Request.ContentType == "application/json" {
-		c.Response.ContentType = "application/json"
-		if len(plogs) == 0 {
-			return c.NotFound("Log not found", nil)
-		}
-		return c.RenderJSON(plogs[0])
-	}
 	processLogs(&plogs)
 	c.ViewArgs["plogs"] = plogs
 	c.ViewArgs["menuitem"] = "tapeta"
@@ -219,9 +209,6 @@ func (c App) Avatar(id int) revel.Result {
 }
 
 func (c App) Search(page int) revel.Result {
-	if c.Request.ContentType == "application/json" {
-		return c.searchJSON(c.Params)
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -250,19 +237,43 @@ func (c App) Search(page int) revel.Result {
 	return c.FinishAndRender("search.html")
 }
 
-func (c App) searchJSON(params *revel.Params) revel.Result {
+// --------------
+// JSON endpoints
+// --------------
+
+func (c App) ShowLogJSON(id int) revel.Result {
+    plog, err := GetPlog(id)
+
+    if err != nil {
+        return c.NotFound("Log not found")
+    } else {
+        return c.RenderJSON(plog)
+    }
+}
+
+func (c App) RandomJSON() revel.Result {
+	plogs, err := GetRandomPlogs()
+	if err != nil {
+		revel.ERROR.Println("Error when showing page", err)
+		return c.RenderError(err)
+	}
+
+    return c.RenderJSON(plogs[0])
+}
+
+func (c App) SearchJSON(page int) revel.Result {
 	c.Response.ContentType = "application/json"
-	keywords := strings.Split(params.Get("s"), " ")
+	keywords := strings.Split(c.Params.Get("s"), " ")
 	if len(keywords) == 0 {
 		return c.NotFound("Log not found", nil)
 	}
-	var numplogs = 1
-	plogs, err := SearchPlogs(keywords, 1, &numplogs)
+	var numplogs int
+	plogs, err := SearchPlogs(keywords, page, &numplogs)
 	if err != nil {
 		c.RenderError(err)
 	}
 	if len(plogs) == 0 {
 		return c.NotFound("Log not found", nil)
 	}
-	return c.RenderJSON(plogs[0])
+	return c.RenderJSON(plogs)
 }

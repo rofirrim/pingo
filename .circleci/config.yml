@@ -45,7 +45,7 @@ jobs:
           name: Configure database settings of the application
           command: |
               cd conf
-              echo '{ "Db" : { "Name" : "pinchito", "User" : "pinchito-test", "Pass" : "p1nt3st" } }' > settings.json
+              echo '{ "Db" : { "Name" : "pinchito-test", "User" : "pinchito-test", "Pass" : "p1nt3st" } }' > settings.json
 
       - run:
           name: Retrieving revel

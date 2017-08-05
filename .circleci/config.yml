@@ -24,6 +24,11 @@ jobs:
       - checkout
 
       - run:
+          name: Extra dependences for tests
+          command: |
+              apt-get install -y bzip2
+
+      - run:
           name: Populate database
           command: |
               cd tests

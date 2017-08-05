@@ -2,6 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Testing support
+module:testrunner
+
+# Regular routing
 GET     /                              App.Index
 GET     /menu/:page                    App.Menu
 GET     /especialitats                 App.Top20
@@ -30,3 +34,4 @@ GET     /json/search                   App.SearchJSON(1)
 GET     /json/search/:page             App.SearchJSON
 # JSON: Catch-all
 GET     /json/:id                      App.ShowLogJSON
+

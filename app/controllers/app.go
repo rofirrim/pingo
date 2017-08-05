@@ -262,10 +262,9 @@ func (c App) RandomJSON() revel.Result {
 }
 
 func (c App) SearchJSON(page int) revel.Result {
-	c.Response.ContentType = "application/json"
 	keywords := strings.Split(c.Params.Get("s"), " ")
 	if len(keywords) == 0 {
-		return c.NotFound("Log not found", nil)
+		return c.NotFound("Log not found")
 	}
 	var numplogs int
 	plogs, err := SearchPlogs(keywords, page, &numplogs)
@@ -273,7 +272,7 @@ func (c App) SearchJSON(page int) revel.Result {
 		c.RenderError(err)
 	}
 	if len(plogs) == 0 {
-		return c.NotFound("Log not found", nil)
+		return c.NotFound("Log not found")
 	}
 	return c.RenderJSON(plogs)
 }

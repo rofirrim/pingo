@@ -27,7 +27,7 @@ jobs:
           name: Populate database
           command: |
               cd tests
-              bunzip test-db.sql.bz2
+              bunzip2 test-db.sql.bz2
               mysql -u root -e "source test-db.sql"
 
       - run:

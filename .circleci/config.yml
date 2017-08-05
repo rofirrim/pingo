@@ -23,7 +23,20 @@ jobs:
     steps:
       - checkout
 
-      - run: go get github.com/revel/revel
-      - run: go get github.com/revel/cmd/revel
-      - run: go get github.com/go-sql-driver/mysql
-      # specify any bash command here prefixed with `run: `
+      - run:
+          name: Retrieving revel
+          command: go get github.com/revel/revel
+      - run:
+          name: Retrieving revel (cmdline)
+          command: go get github.com/revel/cmd/revel
+      - run:
+          name: Retrieving mysql
+          command: go get github.com/go-sql-driver/mysql
+      - run:
+          name: Running revel tests
+          command: revel test pinchito
+
+      - deploy:
+          name: Deploying (stand-in)
+          command: echo "Deploying"
+          when: on_success

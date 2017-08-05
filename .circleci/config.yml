@@ -38,7 +38,6 @@ jobs:
       - run:
           name: Create testing user in the database
           command: |
-              mysql -u root -e "CREATE DATABASE \`pinchito-test\`;"
               mysql -u root -e "CREATE USER 'pinchito-test'@'localhost' IDENTIFIED BY 'p1nt3st';"
               mysql -u root -e "GRANT ALL PRIVILEGES ON \`pinchito-test\`.* TO 'pinchito-test'@'localhost'"
 

@@ -25,9 +25,8 @@ jobs:
       - run:
           name: Extra dependences for tests
           command: |
-              sudo apt-get install -y bzip2
-              sudo apt-get install -y mysql-server
-              sudo apt-get install -y mysql-client
+              sudo apt-get install -y bzip2 mysql-server mysql-client
+              sudo /etc/init.d/mysql start
 
       - run:
           name: Populate database

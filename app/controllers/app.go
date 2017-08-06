@@ -160,7 +160,6 @@ func (c App) ShowLog(id int) revel.Result {
 	}
 }
 
-
 func (c App) Top20() revel.Result {
 	plogs, err := GetTop20Plogs()
 	if err != nil {
@@ -243,13 +242,13 @@ func (c App) Search(page int) revel.Result {
 // --------------
 
 func (c App) ShowLogJSON(id int) revel.Result {
-    plog, err := GetPlog(id)
+	plog, err := GetPlog(id)
 
-    if err != nil {
-        return c.NotFound("Log not found")
-    } else {
-        return c.RenderJSON(plog)
-    }
+	if err != nil {
+		return c.NotFound("Log not found")
+	} else {
+		return c.RenderJSON(plog)
+	}
 }
 
 func (c App) RandomJSON() revel.Result {
@@ -259,7 +258,7 @@ func (c App) RandomJSON() revel.Result {
 		return c.RenderError(err)
 	}
 
-    return c.RenderJSON(plogs[0])
+	return c.RenderJSON(plogs[0])
 }
 
 func (c App) SearchJSON(page int) revel.Result {

@@ -1,5 +1,7 @@
 # Welcome to go.pinchito.com
 
+[![CircleCI](https://circleci.com/gh/rofirrim/pingo/tree/master.svg?style=svg)](https://circleci.com/gh/rofirrim/pingo/tree/master)
+
 Web app for go.pinchito.com. Done using [Revel](http://revel.github.io/) a
 high-productivity web framework for the [Go language](http://www.golang.org/) 
 

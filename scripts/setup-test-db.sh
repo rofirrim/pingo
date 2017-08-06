@@ -11,7 +11,7 @@ function run_mysql_stmt()
 #############################
 # Populate database
 #############################
-run_mysql_stmt "DROP DATABASE \`pinchito-test\` IF EXISTS;"
+run_mysql_stmt "DROP DATABASE IF EXISTS \`pinchito-test\`;"
 
 TMPFILE=$(mktemp)
 bunzip2 -c ../tests/test-db.sql.bz2 > ${TMPFILE}

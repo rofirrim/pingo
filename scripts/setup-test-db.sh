@@ -21,7 +21,8 @@ run_mysql_stmt "source ${TMPFILE}"
 #############################
 # User
 #############################
-run_mysql_stmt "DROP USER IF EXISTS 'pinchito-test'@'localhost';"
+# Not supported in mysql 5.5!
+# run_mysql_stmt "DROP USER IF EXISTS 'pinchito-test'@'localhost';"
 
 run_mysql_stmt "CREATE USER 'pinchito-test'@'localhost' IDENTIFIED BY 'p1nt3st';"
 run_mysql_stmt "GRANT ALL PRIVILEGES ON \`pinchito-test\`.* TO 'pinchito-test'@'localhost'"

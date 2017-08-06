@@ -47,6 +47,6 @@ jobs:
           command: revel test pingo
 
       - deploy:
-          name: Deploying (stand-in)
-          command: echo "Deploying"
+          name: Deploying
+          command: ssh pinchito@go.pinchito.com scripts/update-deploy.sh
           when: on_success

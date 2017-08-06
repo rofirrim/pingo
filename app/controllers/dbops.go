@@ -1,7 +1,7 @@
 package controllers
 
-import "pinchito/app"
-import "pinchito/app/models"
+import "pingo/app"
+import "pingo/app/models"
 import "database/sql"
 import "github.com/revel/revel"
 import "github.com/go-sql-driver/mysql"

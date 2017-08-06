@@ -10,7 +10,7 @@ Make sure you have a correct `$GOPATH` set (e.g. add `export GOPATH=$HOME/Go` to
     $ go get github.com/revel/revel
     $ go get github.com/revel/cmd/revel
     $ go get github.com/go-sql-driver/mysql
-    $ git clone https://github.com/rofirrim/pingo src/pinchito
+    $ git clone https://github.com/rofirrim/pingo src/pingo
 
 To set up the DB
 

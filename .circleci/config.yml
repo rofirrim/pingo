@@ -18,7 +18,7 @@ jobs:
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
     #### working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-    working_directory: /go/src/pinchito
+    working_directory: /go/src/pingo
     steps:
       - checkout
 
@@ -29,24 +29,10 @@ jobs:
               sudo /etc/init.d/mysql start
 
       - run:
-          name: Populate database
+          name: Set up testing database
           command: |
-              cd tests
-              bunzip2 test-db.sql.bz2
-              mysql -u root -e "source test-db.sql"
-
-      - run:
-          name: Create testing user in the database
-          command: |
-              mysql -u root -e "CREATE USER 'pinchito-test'@'localhost' IDENTIFIED BY 'p1nt3st';"
-              mysql -u root -e "GRANT ALL PRIVILEGES ON \`pinchito-test\`.* TO 'pinchito-test'@'localhost'"
-
-      - run:
-          name: Configure database settings of the application
-          command: |
-              cd conf
-              echo '{ "Db" : { "Name" : "pinchito-test", "User" : "pinchito-test", "Pass" : "p1nt3st" } }' > settings.json
-
+              cd scripts
+              ./setup-test-db.sh
       - run:
           name: Retrieving revel
           command: go get github.com/revel/revel
@@ -58,7 +44,7 @@ jobs:
           command: go get github.com/go-sql-driver/mysql
       - run:
           name: Running revel tests
-          command: revel test pinchito
+          command: revel test pingo
 
       - deploy:
           name: Deploying (stand-in)

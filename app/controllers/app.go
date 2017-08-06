@@ -154,6 +154,7 @@ func (c App) ShowLog(id int) revel.Result {
 		revel.INFO.Println("Plog not found. Redirecting to menu", err)
 		return c.Menu(1)
 	} else {
+		processLog(&plog)
 		c.ViewArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}

@@ -21,7 +21,6 @@ func (t *AppTest) TestThatIndexPageWorks() {
 	t.AssertContentType("text/html; charset=utf-8")
 }
 
-
 // JSON endpoints
 func (t *AppTest) TestThatWeCanUpload() {
 	// Upload
@@ -51,7 +50,7 @@ func (t *AppTest) TestThatWeCanUpload() {
 	t.Get(fmt.Sprintf("/%d", result.IdPlog))
 	t.AssertOk()
 	t.AssertContentType("text/html; charset=utf-8")
-    // Check the content makes sense
+	// Check the content makes sense
 	str := string(t.ResponseBody[:])
 	t.Assert(strings.Contains(str, "New text!"))
 	t.Assert(strings.Contains(str, "New title!"))

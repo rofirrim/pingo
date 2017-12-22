@@ -282,6 +282,7 @@ func (c App) UploadJSON() revel.Result {
 	err := c.Params.BindJSON(&uploadJSON)
 	if err != nil {
 		revel.ERROR.Println("Error when binding JSON info", err)
+		c.Response.Status = http.StatusBadRequest
 		return c.RenderJSON(models.JSONUploadResult{false, 0, err.Error()})
 	}
 

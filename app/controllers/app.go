@@ -297,13 +297,13 @@ func (c App) UploadJSON() revel.Result {
 	// FIXME: Refactor if we need to add more checks like the ones below.
 	if err != nil {
 		revel.ERROR.Println("Error retrieving Protagonista", err)
-		c.Response.Status = http.StatusBadRequest
+		c.Response.Status = http.StatusUnprocessableEntity
 		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
 	}
 	_, err = GetUser(plogData.Autor)
 	if err != nil {
 		revel.ERROR.Println("Error retrieving Autor", err)
-		c.Response.Status = http.StatusBadRequest
+		c.Response.Status = http.StatusUnprocessableEntity
 		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
 	}
 
@@ -312,7 +312,7 @@ func (c App) UploadJSON() revel.Result {
 	idPlog, err = UploadPlog(plogData)
 
 	if err != nil {
-		c.Response.Status = http.StatusBadRequest
+		c.Response.Status = http.StatusInternalServerError
 		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
 	}
 

@@ -282,7 +282,7 @@ func (c App) UploadJSON() revel.Result {
 	err := c.Params.BindJSON(&uploadJSON)
 	if err != nil {
 		revel.ERROR.Println("Error when binding JSON info", err)
-		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
+		return c.RenderJSON(models.JSONUploadResult{false, 0, err.Error()})
 	}
 
 	// Check the shared secret
@@ -298,13 +298,13 @@ func (c App) UploadJSON() revel.Result {
 	if err != nil {
 		revel.ERROR.Println("Error retrieving Protagonista", err)
 		c.Response.Status = http.StatusUnprocessableEntity
-		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
+		return c.RenderJSON(models.JSONUploadResult{false, 0, err.Error()})
 	}
 	_, err = GetUser(plogData.Autor)
 	if err != nil {
 		revel.ERROR.Println("Error retrieving Autor", err)
 		c.Response.Status = http.StatusUnprocessableEntity
-		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
+		return c.RenderJSON(models.JSONUploadResult{false, 0, err.Error()})
 	}
 
 	// Process input
@@ -313,8 +313,8 @@ func (c App) UploadJSON() revel.Result {
 
 	if err != nil {
 		c.Response.Status = http.StatusInternalServerError
-		return c.RenderJSON(models.JSONUploadResult{ false, 0, err.Error() })
+		return c.RenderJSON(models.JSONUploadResult{false, 0, err.Error()})
 	}
 
-	return c.RenderJSON(models.JSONUploadResult{ true, idPlog, "" })
+	return c.RenderJSON(models.JSONUploadResult{true, idPlog, ""})
 }

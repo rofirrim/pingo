@@ -55,7 +55,7 @@ jobs:
       - deploy:
           name: Deploying
           command: |
-			  mkdir ~/.ssh
+              mkdir ~/.ssh
               ssh-keyscan -H go.pinchito.com >> ~/.ssh/known_hosts
               ssh pinchito@go.pinchito.com scripts/update-deploy.sh
 

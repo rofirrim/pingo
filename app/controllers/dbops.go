@@ -8,6 +8,7 @@ import "github.com/go-sql-driver/mysql"
 import "fmt"
 import "strings"
 import "errors"
+import "time"
 
 func GetUser(id int) (models.User, error) {
 	row := app.DB.QueryRow("SELECT u.id, u.login, u.avatar FROM users u WHERE id = ?", id)
@@ -195,4 +196,34 @@ func SearchPlogs(keywords []string, page int, numplogs *int) ([]models.Plog, err
 	}
 
 	return retrievePlogs(rows)
+}
+
+func UploadPlog(plogJSON models.PlogData) (int, error) {
+	tx, err := app.DB.Begin()
+
+	if err != nil {
+		return 0, err
+	}
+	dateStr := time.Unix(plogJSON.Data, 0).Format("2006-01-02 15:04:05")
+	_, err = app.DB.Exec(
+		"INSERT INTO plogs(text, autor, protagonista, titol, data) VALUES (?, ?, ?, ?, ?)",
+		plogJSON.Text,
+		plogJSON.Autor,
+		plogJSON.Protagonista,
+		plogJSON.Titol,
+		dateStr)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	var idPlog int
+	err = app.DB.QueryRow("SELECT LAST_INSERT_ID()").Scan(&idPlog)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	tx.Commit()
+
+	return idPlog, nil
 }

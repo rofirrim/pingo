@@ -32,6 +32,7 @@ GET     /:id                           App.ShowLog
 GET     /json/random                   App.RandomJSON
 GET     /json/search                   App.SearchJSON(1)
 GET     /json/search/:page             App.SearchJSON
+POST    /json/upload                   App.UploadJSON
 # JSON: Catch-all
 GET     /json/:id                      App.ShowLogJSON
 

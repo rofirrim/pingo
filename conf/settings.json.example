@@ -3,5 +3,8 @@
         "Name" : "database-name",
         "User" : "username",
         "Pass" : "password"
+    },
+    "Auth" : {
+	"Token" : "random-token-used-to-add-logs"
     }
 }

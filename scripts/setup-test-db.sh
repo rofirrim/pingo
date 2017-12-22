@@ -30,4 +30,4 @@ run_mysql_stmt "GRANT ALL PRIVILEGES ON \`pinchito-test\`.* TO 'pinchito-test'@'
 #############################
 # Application
 #############################
-echo '{ "Db" : { "Name" : "pinchito-test", "User" : "pinchito-test", "Pass" : "p1nt3st" } }' > ../conf/settings.json
+echo '{ "Db" : { "Name" : "pinchito-test", "User" : "pinchito-test", "Pass" : "p1nt3st" }, "Auth": { "Token": "auth-token-test" } }' > ../conf/settings.json

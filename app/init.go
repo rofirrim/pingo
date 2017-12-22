@@ -31,6 +31,7 @@ func init() {
 }
 
 var DB *sql.DB
+var AuthToken string
 
 const LogsPerPage = 10
 
@@ -40,8 +41,13 @@ type dbConnectionInfo struct {
 	Pass string
 }
 
+type authInfo struct {
+	Token string
+}
+
 type Settings struct {
 	DB dbConnectionInfo
+	Auth authInfo
 }
 
 // revel uses a ConfPaths variable that includes both revel and app confs
@@ -74,6 +80,7 @@ func InitDB() {
 		revel.ERROR.Println("Load settings", err)
 	}
 
+	AuthToken = settings.Auth.Token
 	DB, err = loadDB(settings.DB)
 
 	if err != nil {

@@ -71,6 +71,20 @@ func (t *AppTest) TestUploadFailsAuth() {
 	t.Assert(t.Response.StatusCode == http.StatusForbidden)
 }
 
+func (t *AppTest) TestUploadInvalidSyntax() {
+    // Note the trailing comma after Data
+	query := `{ "AuthToken" : "invalid-token-test",
+			"Upload" : {
+			"Text": "New text!",
+			"Protagonista": 1,
+			"Autor": 1,
+			"Titol": "New title!",
+			"Data" : 1513932522,
+			} }`
+	t.Post("/json/upload", "application/json", strings.NewReader(query))
+	t.Assert(t.Response.StatusCode == http.StatusBadRequest)
+}
+
 func (t *AppTest) After() {
 	println("Tear down")
 }

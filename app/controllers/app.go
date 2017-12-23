@@ -287,7 +287,7 @@ func (c App) UploadJSON() revel.Result {
 	}
 
 	// Check the shared secret
-	if uploadJSON.AuthToken != app.AuthToken {
+	if uploadJSON.AuthToken != app.AuthToken || uploadJSON.AuthToken == "" {
 		return c.Forbidden("Invalid AuthToken")
 	}
 

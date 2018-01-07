@@ -3,7 +3,8 @@
         "Name"     : "database-name",
         "Protocol" : "unix",
         "User"     : "username",
-        "Pass"     : "password"
+        "Pass"     : "password",
+        "Charset"  : "latin1-or-utf8mb4"
     },
     "Auth" : {
 	"Token" : "random-token-used-to-add-logs"

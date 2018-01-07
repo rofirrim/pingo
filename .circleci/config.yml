@@ -42,14 +42,17 @@ jobs:
               cd scripts
               ./setup-test-db.sh
       - run:
-          name: Retrieving revel
-          command: go get github.com/revel/revel
+          name: Setup and install glide
+          command: |
+              wget https://github.com/Masterminds/glide/releases/download/v0.13.1/glide-v0.13.1-linux-amd64.tar.gz
+              tar xvfz glide-v0.13.1-linux-amd64.tar.gz -C $GOPATH/bin --strip-components=1 linux-amd64/glide
+              rm glide-v0.13.1-linux-amd64.tar.gz
       - run:
-          name: Retrieving revel (cmdline)
-          command: go get github.com/revel/cmd/revel
-      - run:
-          name: Retrieving mysql
-          command: go get github.com/go-sql-driver/mysql
+          name: Setup dependences
+          command: |
+              glide install
+              go install pingo/vendor/github.com/revel/cmd/revel
+              ln -s $(pwd)/vendor/github.com $GOPATH/src        # revel/cmd/revel is a bit special
       - run:
           name: Running revel tests
           command: revel test pingo

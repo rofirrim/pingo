@@ -2,3 +2,4 @@ test-results/
 tmp/
 routes/
 conf/settings.json
+.idea/

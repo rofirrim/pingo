@@ -1,8 +1,9 @@
 {
     "Db" : {
-        "Name" : "database-name",
-        "User" : "username",
-        "Pass" : "password"
+        "Name"     : "database-name",
+        "Protocol" : "unix",
+        "User"     : "username",
+        "Pass"     : "password"
     },
     "Auth" : {
 	"Token" : "random-token-used-to-add-logs"

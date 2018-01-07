@@ -7,6 +7,11 @@ jobs:
     docker:
       # specify the version
       - image: circleci/golang:1.7.5
+      - image: mysql:5.5
+        ports:
+          - 3306:3306
+        environment:
+          MYSQL_ROOT_PASSWORD: password
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -25,8 +30,11 @@ jobs:
           name: Extra dependences for tests
           command: |
               sudo apt-get update
-              sudo apt-get install -y bzip2 mysql-server mysql-client
-              sudo /etc/init.d/mysql start
+              sudo apt-get install -y bzip2 mysql-client
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run:
           name: Set up testing database

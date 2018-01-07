@@ -5,7 +5,7 @@
 function run_mysql_stmt()
 (
     stmt=$1
-    mysql -u root -e "$stmt"
+    mysql -h localhost --protocol=TCP -u root -ppassword -e "$stmt"
 )
 
 #############################
@@ -19,15 +19,6 @@ bunzip2 -c ../tests/test-db.sql.bz2 > ${TMPFILE}
 run_mysql_stmt "source ${TMPFILE}"
 
 #############################
-# User
-#############################
-# Not supported in mysql 5.5!
-# run_mysql_stmt "DROP USER IF EXISTS 'pinchito-test'@'localhost';"
-
-run_mysql_stmt "CREATE USER 'pinchito-test'@'localhost' IDENTIFIED BY 'p1nt3st';"
-run_mysql_stmt "GRANT ALL PRIVILEGES ON \`pinchito-test\`.* TO 'pinchito-test'@'localhost'"
-
-#############################
 # Application
 #############################
-echo '{ "Db" : { "Name" : "pinchito-test", "User" : "pinchito-test", "Pass" : "p1nt3st" }, "Auth": { "Token": "auth-token-test" } }' > ../conf/settings.json
+echo '{ "Db" : { "Name" : "pinchito-test", "User" : "root", "Pass" : "password", "Protocol": "tcp" }, "Auth": { "Token": "auth-token-test" } }' > ../conf/settings.json

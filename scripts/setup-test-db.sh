@@ -21,4 +21,4 @@ run_mysql_stmt "source ${TMPFILE}"
 #############################
 # Application
 #############################
-echo '{ "Db" : { "Name" : "pinchito-test", "User" : "root", "Pass" : "password", "Protocol": "tcp" }, "Auth": { "Token": "auth-token-test" } }' > ../conf/settings.json
+echo '{ "Db" : { "Name" : "pinchito-test", "User" : "root", "Pass" : "password", "Protocol": "tcp", "Charset" : "latin1" }, "Auth": { "Token": "auth-token-test" } }' > ../conf/settings.json

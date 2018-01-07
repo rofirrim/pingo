@@ -40,6 +40,7 @@ type dbConnectionInfo struct {
 	User     string
 	Protocol string
 	Pass     string
+	Charset  string
 }
 
 type authInfo struct {
@@ -54,6 +55,17 @@ type Settings struct {
 // revel uses a ConfPaths variable that includes both revel and app confs
 var AppConfPath string
 
+func checkSettingsDB(DB dbConnectionInfo) error {
+	if DB.Charset == "" {
+		return fmt.Errorf("Charset is missing in settings.json")
+	}
+	if DB.Charset != "latin1" || DB.Charset != "utf8mb4" {
+		return fmt.Errorf("Charset '%s' is not supported. Only 'latin1' or 'utf8mb4' are supported",
+			DB.Charset)
+	}
+	return nil
+}
+
 func loadSettings() (Settings, error) {
 	var settings Settings
 	data, err := ioutil.ReadFile(filepath.Join(AppConfPath, "settings.json"))
@@ -64,11 +76,17 @@ func loadSettings() (Settings, error) {
 	if err != nil {
 		return settings, err
 	}
+
+	err = checkSettingsDB(settings.DB)
+	if err != nil {
+		return settings, err
+	}
+
 	return settings, nil
 }
 
 func loadDB(DB dbConnectionInfo) (*sql.DB, error) {
-	connection := fmt.Sprintf("%s:%s@%s/%s?charset=latin1", DB.User, DB.Pass, DB.Protocol, DB.Name)
+	connection := fmt.Sprintf("%s:%s@%s/%s?charset=%s", DB.User, DB.Pass, DB.Protocol, DB.Name, DB.Charset)
 	return sql.Open("mysql", connection)
 }
 

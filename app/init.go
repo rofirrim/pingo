@@ -36,9 +36,10 @@ var AuthToken string
 const LogsPerPage = 10
 
 type dbConnectionInfo struct {
-	Name string
-	User string
-	Pass string
+	Name     string
+	User     string
+	Protocol string
+	Pass     string
 }
 
 type authInfo struct {
@@ -46,7 +47,7 @@ type authInfo struct {
 }
 
 type Settings struct {
-	DB dbConnectionInfo
+	DB   dbConnectionInfo
 	Auth authInfo
 }
 
@@ -67,7 +68,7 @@ func loadSettings() (Settings, error) {
 }
 
 func loadDB(DB dbConnectionInfo) (*sql.DB, error) {
-	connection := fmt.Sprintf("%s:%s@/%s?charset=latin1", DB.User, DB.Pass, DB.Name)
+	connection := fmt.Sprintf("%s:%s@%s/%s?charset=latin1", DB.User, DB.Pass, DB.Protocol, DB.Name)
 	return sql.Open("mysql", connection)
 }
 

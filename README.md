@@ -7,12 +7,24 @@ high-productivity web framework for the [Go language](http://www.golang.org/)
 
 ## Quick start
 
-Make sure you have a correct `$GOPATH` set (e.g. add `export GOPATH=$HOME/Go` to your `.bashrc`)
+Make sure you have a correct `$GOPATH` set (e.g. add `export GOPATH=$HOME/Go`
+to your `.bashrc`). Also make sure `$GOPATH/bin` is in your `PATH`.
 
-    $ go get github.com/revel/revel
-    $ go get github.com/revel/cmd/revel
-    $ go get github.com/go-sql-driver/mysql
+    $ export PATH=$GOPATH/bin:$PATH
+
+First install [glide](https://glide.sh/) as we use it to lock the dependences.
+It should be in `$GOPATH/bin`.
+
+    $ cd $GOPATH
     $ git clone https://github.com/rofirrim/pingo src/pingo
+    $ cd src/pingo
+    $ glide install
+    $ go install pingo/vendor/github.com/revel/cmd/revel
+
+Revel does not work well with vendored paths so we need to create a soft link
+
+    $ cd $GOPATH/src/pingo
+    $ ln -s $(pwd)/vendor/github.com $GOPATH/src 
 
 To set up the DB
 
@@ -26,7 +38,6 @@ the application will not work.
 
 Local server for development
 
-    $ export PATH=$GOPATH/bin:$PATH
     $ revel run pingo
 
 Now connect to localhost:9000

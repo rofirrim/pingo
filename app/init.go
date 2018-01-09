@@ -59,7 +59,7 @@ func checkSettingsDB(DB dbConnectionInfo) error {
 	if DB.Charset == "" {
 		return fmt.Errorf("Charset is missing in settings.json")
 	}
-	if DB.Charset != "latin1" || DB.Charset != "utf8mb4" {
+	if DB.Charset != "latin1" && DB.Charset != "utf8mb4" {
 		return fmt.Errorf("Charset '%s' is not supported. Only 'latin1' or 'utf8mb4' are supported",
 			DB.Charset)
 	}

@@ -16,7 +16,7 @@ Make sure you have a correct `$GOPATH` set (e.g. add `export GOPATH=$HOME/Go` to
 
 To set up the DB
 
-    $ cd $GOPATH/src/pinchito/conf
+    $ cd $GOPATH/src/pingo/conf
     $ cp settings.json.example settings.json
 
 and then edit `settings.json`.
@@ -27,7 +27,7 @@ the application will not work.
 Local server for development
 
     $ export PATH=$GOPATH/bin:$PATH
-    $ revel run pinchito
+    $ revel run pingo
 
 Now connect to localhost:9000
 

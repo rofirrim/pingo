@@ -2,11 +2,14 @@ package models
 
 type Plog struct {
 	Id           int
+	RawText      string
 	Text         string
 	Protagonista User
 	Autor        User
+	RawTitol     string
 	Titol        string
 	Dia          string
+	DiaYMD       string
 	Hora         string
 	Nota         float32
 }

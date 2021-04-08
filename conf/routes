@@ -13,6 +13,9 @@ GET     /tapeta                        App.Random
 GET     /buscar                        App.Search(1)
 GET     /buscar/:page                  App.Search
 
+GET     /edit/:id                      App.EditLog
+POST    /edit/:id                      App.SubmitEditLog
+
 GET     /public/*filepath              Static.Serve("public")
 # Redirect favicon
 GET     /favicon.ico                   Static.Serve("public","images/favicon.ico")

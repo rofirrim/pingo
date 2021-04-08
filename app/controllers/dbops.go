@@ -20,11 +20,36 @@ func GetUser(id int) (models.User, error) {
 	return autor, nil
 }
 
+func GetUsers() ([]models.SimpleUser, error) {
+	rows, err := app.DB.Query("SELECT u.id, u.login FROM users u")
+	if err != nil {
+		return []models.SimpleUser{}, err
+	}
+	defer rows.Close()
+
+	var users []models.SimpleUser
+
+	for rows.Next() {
+		var id int
+		var name string
+		if err := rows.Scan(&id, &name); err != nil {
+			revel.ERROR.Println("Error retrieving users", err)
+			return []models.SimpleUser{}, err
+		}
+		users = append(users, models.SimpleUser{id, name})
+	}
+
+	return users, nil
+}
+
 func makePlogFromRows(rows *sql.Rows) (models.Plog, error) {
 	var plog models.Plog
 	var autor, protagonista int
 	var nt mysql.NullTime
-	err := rows.Scan(&plog.Id, &plog.Text, &autor, &protagonista, &plog.Titol, &nt, &plog.Nota)
+	err := rows.Scan(&plog.Id, &plog.RawText, &autor, &protagonista, &plog.RawTitol, &nt, &plog.Nota)
+	// Compat with JSON endpoints
+	plog.Text = plog.RawText
+	plog.Titol = plog.RawTitol
 	return makePlog(err, plog, autor, protagonista, nt)
 }
 
@@ -32,7 +57,10 @@ func makePlogFromRow(row *sql.Row) (models.Plog, error) {
 	var plog models.Plog
 	var autor, protagonista int
 	var nt mysql.NullTime
-	err := row.Scan(&plog.Id, &plog.Text, &autor, &protagonista, &plog.Titol, &nt, &plog.Nota)
+	err := row.Scan(&plog.Id, &plog.RawText, &autor, &protagonista, &plog.RawTitol, &nt, &plog.Nota)
+	// Compat with JSON endpoints
+	plog.Text = plog.RawText
+	plog.Titol = plog.RawTitol
 	return makePlog(err, plog, autor, protagonista, nt)
 }
 
@@ -44,6 +72,7 @@ func makePlog(err error, plog models.Plog, autor int, protagonista int, nt mysql
 
 	if nt.Valid {
 		plog.Dia = nt.Time.Format("02/01/2006")
+		plog.DiaYMD = nt.Time.Format("2006-01-02")
 		plog.Hora = nt.Time.Format("15:04")
 	} else {
 		plog.Dia = "dia desconegut"
@@ -226,4 +255,30 @@ func UploadPlog(plogJSON models.PlogData) (int, error) {
 	tx.Commit()
 
 	return idPlog, nil
+}
+
+func UpdatePlog(plog models.Plog) error {
+	tx, err := app.DB.Begin()
+
+	if err != nil {
+		return err
+	}
+
+	dateStr := plog.DiaYMD + " " + plog.Hora
+
+	_, err = app.DB.Exec(
+		"UPDATE plogs SET text = ?, autor = ?, protagonista = ?, titol = ?, data = ? WHERE id = ?",
+		plog.RawText,
+		plog.Autor.Id,
+		plog.Protagonista.Id,
+		plog.RawTitol,
+		dateStr,
+		plog.Id)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return nil
 }

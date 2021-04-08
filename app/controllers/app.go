@@ -8,6 +8,8 @@ import "pingo/app/models"
 
 import "net/http"
 import "strings"
+import "strconv"
+import "time"
 
 type App struct {
 	*revel.Controller
@@ -36,13 +38,13 @@ func computeCookie(renderMap *map[string]interface{}) {
 }
 
 func processLogHighlights(plog *models.Plog, keywords []string) {
-	t, err := helpers.ProcessLogText(plog.Text, keywords)
+	t, err := helpers.ProcessLogText(plog.RawText, keywords)
 	if err != nil {
 		revel.ERROR.Println("Error when processing text of log", err)
 	} else {
 		plog.Text = t
 	}
-	t, err = helpers.ProcessLogTitle(plog.Titol, keywords)
+	t, err = helpers.ProcessLogTitle(plog.RawTitol, keywords)
 	if err != nil {
 		revel.ERROR.Println("Error when processing title of log", err)
 	} else {
@@ -235,6 +237,106 @@ func (c App) Search(page int) revel.Result {
 	c.ViewArgs["query"] = c.Params.Get("s")
 
 	return c.FinishAndRender("search.html")
+}
+
+func (c App) EditLog(id int) revel.Result {
+	plog, err := GetPlog(id)
+	if err != nil {
+		revel.INFO.Println("Plog not found. Redirecting to menu", err)
+		return c.Menu(1)
+	}
+	processLog(&plog)
+
+	users, err := GetUsers()
+	if err != nil {
+		revel.INFO.Println("Error obtaining users", err)
+		return c.RenderError(err)
+	}
+
+	c.ViewArgs["plog"] = plog
+	c.ViewArgs["users"] = users
+	return c.FinishAndRender("edit_log.html")
+}
+
+func (c App) makePlogFromPOST(id int) (models.Plog, error) {
+	var plog models.Plog
+	var err error
+	var user_id int
+
+	plog.Id = id
+	plog.RawText = c.Params.Form.Get("log_text")
+	plog.Text = plog.RawText
+
+	user_id, err = strconv.Atoi(c.Params.Form.Get("protagonista"))
+	if err != nil {
+		revel.INFO.Println("protagonista is not integer", err)
+		return models.Plog{}, err
+	}
+	plog.Protagonista, err = GetUser(user_id)
+	if err != nil {
+		revel.INFO.Println("Error obtaining protagonista.", err)
+		return models.Plog{}, err
+	}
+
+	var t time.Time
+	t, err = time.Parse("2006-01-02", c.Params.Form.Get("dia"))
+	if err != nil {
+		revel.INFO.Println("Wrong day", err)
+		return models.Plog{}, err
+	}
+	plog.DiaYMD = t.Format("2006-01-02")
+	plog.Dia = t.Format("02/01/2006")
+
+	t, err = time.Parse("15:04", c.Params.Form.Get("hora"))
+	if err != nil {
+		revel.INFO.Println("Wrong hour", err)
+		return models.Plog{}, err
+	}
+	plog.Hora = t.Format("15:04")
+
+	user_id, err = strconv.Atoi(c.Params.Form.Get("autor"))
+	if err != nil {
+		revel.INFO.Println("autor is not integer", err)
+		return models.Plog{}, err
+	}
+	plog.Autor, err = GetUser(user_id)
+	if err != nil {
+		revel.INFO.Println("Error obtaining autor.", err)
+		return models.Plog{}, err
+	}
+
+	plog.RawTitol = c.Params.Form.Get("titol")
+	plog.Titol = plog.RawTitol
+
+	return plog, nil
+}
+
+func (c App) SubmitEditLog(id int) revel.Result {
+	plog, err := c.makePlogFromPOST(id)
+	if err != nil {
+		revel.INFO.Println("Error making plog from form POST", err)
+		return c.RenderError(err)
+	}
+
+	err = UpdatePlog(plog)
+	if err != nil {
+		revel.INFO.Println("Error updating DB", err)
+		return c.RenderError(err)
+	}
+
+	users, err := GetUsers()
+	if err != nil {
+		revel.INFO.Println("Error obtaining users", err)
+		return c.Menu(1)
+	}
+
+	// Reload plog from the DB.
+	plog, err = GetPlog(id)
+	processLog(&plog)
+
+	c.ViewArgs["plog"] = plog
+	c.ViewArgs["users"] = users
+	return c.FinishAndRender("edit_log.html")
 }
 
 // --------------

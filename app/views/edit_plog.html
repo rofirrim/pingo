@@ -1,0 +1,46 @@
+<div class="log">
+  <meta property="og:title" content="{{raw .plog.Titol}}" >
+  <meta property="og:description" content="{{nl2br .plog.Description}}" >
+  <span id="puntuacio-{{.plog.Id}}"></span>
+
+<form autocomplete="off" action="" method="post">
+<input type="hidden" id="log_id" value="{{.plog.Id}}">
+
+<span class="titollog">
+
+<select name="protagonista">
+{{$protagonista := .plog.Protagonista}}
+{{range .users}}
+<option value="{{.Id}}" {{ if eq $protagonista.Id .Id }} selected {{end}}>{{.Login}}</option>
+{{end}}
+</select>
+
+<input type="text" name="titol" value="{{.plog.RawTitol}}">
+</span>
+
+<div class="logbody">
+<textarea name="log_text" rows="10" cols="80" style="min-width: 100%;">{{.plog.RawText}}</textarea>
+</div>
+
+<div class="infolog">
+Log del <input name="dia" type="date" value="{{.plog.DiaYMD}}"> a les <input name="hora" type="time" value="{{.plog.Hora}}"> enviat per 
+
+<select name="autor">
+{{$autor := .plog.Autor}}
+{{range .users}}
+  <option value="{{.Id}}" {{ if eq $autor.Id .Id }} selected {{end}}>{{.Login}}</option>
+{{end}}
+</select>
+</div>
+
+<div style="text-align: right; margin-top: 1em;">
+<button type="submit">Actualitzar</button>
+</div>
+</form>
+
+<div class="logtags" id="logtags-{{.plog.Id}}"></div>
+</div>
+
+<h3>Previsualització</h3>
+
+{{template "plog.html" .plog}}

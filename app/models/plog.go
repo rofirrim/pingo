@@ -12,6 +12,8 @@ type Plog struct {
 	DiaYMD       string
 	Hora         string
 	Nota         float32
+
+	AllowEdit bool
 }
 
 func (plog Plog) Description() string {

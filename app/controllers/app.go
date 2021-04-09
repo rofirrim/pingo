@@ -157,6 +157,7 @@ func (c App) ShowLog(id int) revel.Result {
 		return c.Menu(1)
 	} else {
 		processLog(&plog)
+		plog.AllowEdit = true
 		c.ViewArgs["plog"] = plog
 		return c.FinishAndRender("single_log.html")
 	}

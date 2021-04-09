@@ -42,6 +42,18 @@ Local server for development
 
 Now connect to localhost:9000
 
+### Packaging
+
+    $ cd ..
+    $ ls
+    pingo github.com
+    $ revel package pingo prod
+    ~
+    ~ revel! http://revel.github.io
+    ~
+    Your archive is ready: pingo.tar.gz
+
+
 ### Follow the guidelines to start developing your application:
 
 * The README file created within your application.
